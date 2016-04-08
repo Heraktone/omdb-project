@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 /**
  * Created by Heraktone on 29/03/2016.
+ *
  */
 public class IMDbPage {
     private String Title;

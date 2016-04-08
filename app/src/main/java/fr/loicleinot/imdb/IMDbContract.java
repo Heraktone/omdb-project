@@ -1,13 +1,13 @@
 package fr.loicleinot.imdb;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 /**
  * Created by Heraktone on 02/04/2016.
+ *
  */
 public final class IMDbContract extends SQLiteOpenHelper{
     private static final String TEXT_TYPE = " TEXT";
@@ -16,6 +16,9 @@ public final class IMDbContract extends SQLiteOpenHelper{
             "CREATE TABLE " + IMDbEntry.TABLE_NAME + " (" +
                     IMDbEntry._ID + " INTEGER PRIMARY KEY," +
                     IMDbEntry.COLUMN_NAME_IMDB_ID + TEXT_TYPE + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_POSTER + "BLOB" + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_PLOT + TEXT_TYPE + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_RELEASED + TEXT_TYPE + COMMA_SEP +
                     IMDbEntry.COLUMN_NAME_TITLE + TEXT_TYPE +" )";
 
     private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + IMDbEntry.TABLE_NAME;
@@ -50,10 +53,5 @@ public final class IMDbContract extends SQLiteOpenHelper{
         public static final String COLUMN_NAME_PLOT = "Plot";
         public static final String COLUMN_NAME_POSTER = "Poster";
         public static final String COLUMN_NAME_RELEASED = "Released";
-        public static final String COLUMN_NAME_RUNTIME = "Runtime";
-        public static final String COLUMN_NAME_ACTORS = "Actors";
-        public static final String COLUMN_NAME_DIRECTOR = "Director";
-        public static final String COLUMN_NAME_GENRE = "Genre";
-
     }
 }
