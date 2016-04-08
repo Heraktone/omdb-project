@@ -2,6 +2,7 @@ package fr.loicleinot.imdb;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.app.SearchableInfo;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.ViewFlipper;
@@ -32,12 +36,41 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class Main2Activity extends Activity {
+public class Main2Activity extends AppCompatActivity {
+
+    private Toolbar toolbar;
+    private MenuItem searchItem;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
+        setSupportActionBar(toolbar);                   // Setting toolbar as the ActionBar with setSupportActionBar() call
+
+        // Associate searchable configuration with the SearchView
+        searchView = new SearchView(getSupportActionBar().getThemedContext());
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
+        searchView.setSearchableInfo(searchableInfo);
+        searchView.setIconifiedByDefault(true);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                AsyncTask<String, Void, Void> asyncTask = new RequestOMDB();
+                asyncTask.execute(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
         ViewFlipper vf = (ViewFlipper)findViewById(R.id.ViewFlipper01);
         vf.setDisplayedChild(3);
@@ -69,6 +102,16 @@ public class Main2Activity extends Activity {
             }
         });
 
+        Button buttonFav = (Button) findViewById(R.id.button);
+
+        buttonFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), FavActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -77,26 +120,15 @@ public class Main2Activity extends Activity {
         // Inflate menu to add items to action bar if it is present.
         inflater.inflate(R.menu.menu_main, menu);
 
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchItem = menu.add(android.R.string.search_go);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                AsyncTask<String, Void, Void> asyncTask = new RequestOMDB();
-                asyncTask.execute(query);
-                return false;
-            }
+        searchItem.setIcon(R.drawable.ic_search_white_36dp);
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
+        MenuItemCompat.setActionView(searchItem, searchView);
 
-        Button buttonFav = (Button) findViewById(R.id.button);
+        MenuItemCompat.setShowAsAction(searchItem,
+                MenuItemCompat.SHOW_AS_ACTION_ALWAYS | MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+
 
         MenuItem favoriteItem = menu.findItem(R.id.action_favorite);
         favoriteItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -105,14 +137,6 @@ public class Main2Activity extends Activity {
                 Intent intent = new Intent(getApplicationContext(), FavActivity.class);
                 startActivity(intent);
                 return true;
-            }
-        });
-
-        buttonFav.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), FavActivity.class);
-                startActivity(intent);
             }
         });
 

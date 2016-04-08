@@ -1,14 +1,21 @@
 package fr.loicleinot.imdb;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,12 +24,18 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class FavActivity extends Activity {
+public class FavActivity extends AppCompatActivity {
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fav);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         IMDbContract mDbHelper = new IMDbContract(getApplicationContext());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -55,10 +68,25 @@ public class FavActivity extends Activity {
         mRecyclerView.setAdapter(mAddapter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.global, menu);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar actionBar = getActionBar();
+            //actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        this.finish();
+        return true;
+    }
+
     public class IMDbRecyclerViewAdapter extends RecyclerView
             .Adapter<IMDbRecyclerViewAdapter
             .DataObjectHolder> {
-        private String LOG_TAG = "MyRecyclerViewAdapter";
+        private String LOG_TAG = "IMDbRecyclerViewAdapter";
         private ArrayList<IMDbObject> mDataset;
 
         public class DataObjectHolder extends RecyclerView.ViewHolder
@@ -73,7 +101,6 @@ public class FavActivity extends Activity {
                 label = (TextView) itemView.findViewById(R.id.title_list);
                 subtitle = (TextView) itemView.findViewById(R.id.subtitle);
                 image = (ImageView) itemView.findViewById(R.id.imageView3);
-                Log.i(LOG_TAG, "Adding Listener");
                 itemView.setOnClickListener(this);
             }
 

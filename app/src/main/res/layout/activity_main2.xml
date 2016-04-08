@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="fr.loicleinot.imdb.Main2Activity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#000"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:theme="@style/ToolBarStyle" />
+
     <ViewFlipper
         android:id="@+id/ViewFlipper01"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent"
+        android:paddingTop="50dp">
 
 
         <include android:id="@+id/test3" layout="@layout/typ_main" />
@@ -16,4 +25,4 @@
         <include android:id="@+id/test1" layout="@layout/movie_page" />
 
     </ViewFlipper>
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
