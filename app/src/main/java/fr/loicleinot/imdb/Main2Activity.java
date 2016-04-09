@@ -1,12 +1,9 @@
 package fr.loicleinot.imdb;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -22,10 +19,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 import android.widget.ViewFlipper;
 
 import org.json.JSONArray;
@@ -53,7 +49,12 @@ public class Main2Activity extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);                   // Setting toolbar as the ActionBar with setSupportActionBar() call
+
+        Intent serviceIntent = new Intent(getApplicationContext(),fr.loicleinot.imdb.IMDbService.class);
+        getApplicationContext().startService(serviceIntent);
+        //stopService(new Intent(this, IMDbService.class));
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -134,7 +135,6 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     public class RequestOMDB extends AsyncTask<String, Void, Void> {
-        IMDbPage imdbinfo;
         private boolean response = false;
         private ArrayList<IMDbObject> object;
 
@@ -150,29 +150,11 @@ public class Main2Activity extends AppCompatActivity {
         }
 
         private void urlRequest(String title) throws IOException {
-            URL url;
-            HttpURLConnection conn;
             InputStream is = null;
-            String contentAsString;
-            int len = 50000;
-            JSONObject json1;
+            JSONObject json1, jsonObjectFiche;
 
             try {
-                //url = new URL("http://www.omdbapi.com/?t=" + title.replaceAll(" ", "+") + "=&plot=full&r=json");
-                url = new URL("http://www.omdbapi.com/?s=" + title.replaceAll(" ", "+"));
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(100000);
-                conn.setConnectTimeout(150000);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.connect();
-
-                is = conn.getInputStream();
-
-                contentAsString = readIt(is, len);
-                Log.d("content", "xml " + contentAsString);
-
-                json1 = new JSONObject(contentAsString);
+                json1 = readURLJSON("http://www.omdbapi.com/?s=" + title.replaceAll(" ", "+"));
 //                response = (json1.getString("Response").equals("True"));
 //                Log.d("reponse", "json " + json1.getString("Response") + " / response " + response);
 /*
@@ -185,8 +167,10 @@ public class Main2Activity extends AppCompatActivity {
                 for (int i = 0; i < jsonResult.length(); i++) {
                     response = true;
                     JSONObject row = jsonResult.getJSONObject(i);
+                    jsonObjectFiche = readURLJSON("http://www.omdbapi.com/?i=" + row.getString("imdbID").replaceAll(" ", "+") + "&plot=full&r=json");
+
                     Bitmap img = getBitmapFromURL(row.getString("Poster"));
-                    object.add(new IMDbObject(row.getString("Title"), row.getString("Year"), "", DbBitmapUtility.getBytes(img)));
+                    object.add(new IMDbObject(row.getString("Title"), row.getString("Year"), jsonObjectFiche.getString("Plot"), DbBitmapUtility.getBytes(img), row.getString("Type"), jsonObjectFiche.getString("Actors"), jsonObjectFiche.getString("Director"), jsonObjectFiche.getString("Runtime"), jsonObjectFiche.getString("Genre")));
                 }
 
 
@@ -197,6 +181,24 @@ public class Main2Activity extends AppCompatActivity {
                     is.close();
                 }
             }
+        }
+
+        private JSONObject readURLJSON(String urlLink) throws JSONException, IOException {
+            int len = 50000;
+            URL url = new URL(urlLink);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(100000);
+            conn.setConnectTimeout(150000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            conn.connect();
+
+            InputStream is = conn.getInputStream();
+
+            String contentAsString = readIt(is, len);
+            Log.d("content", "xml " + contentAsString);
+
+            return new JSONObject(contentAsString);
         }
 
         private String readIt(InputStream is, int len) throws IOException {
@@ -234,34 +236,10 @@ public class Main2Activity extends AppCompatActivity {
 
                 IMDbRecyclerViewAdapter mAddapter = new IMDbRecyclerViewAdapter(object);
                 LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                mRecyclerView.addItemDecoration(new DividerItemDecoration(getResources()));
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAddapter);
 
-/*
-                ImageView imageView = (ImageView) findViewById(R.id.imageView);
-                imageView.setImageBitmap(imdbinfo.getPoster());
-
-                TextView title = (TextView) findViewById(R.id.title);
-                title.setText(imdbinfo.getTitle());
-
-                TextView plot = (TextView) findViewById(R.id.textView3);
-                plot.setText(imdbinfo.getPlot());
-
-                TextView year = (TextView) findViewById(R.id.year);
-                year.setText(imdbinfo.getYear());
-
-                TextView time = (TextView) findViewById(R.id.time);
-                time.setText(imdbinfo.getTime());
-
-                TextView actors = (TextView) findViewById(R.id.actors);
-                actors.setText(imdbinfo.getActors());
-
-                TextView directors = (TextView) findViewById(R.id.director);
-                directors.setText(imdbinfo.getDirectors());
-
-                TextView genre = (TextView) findViewById(R.id.genre);
-                genre.setText(imdbinfo.getGenre());
-*/
                 Log.d("event", "post execution");
             }
             else {

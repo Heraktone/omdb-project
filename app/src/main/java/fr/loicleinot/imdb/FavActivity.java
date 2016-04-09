@@ -3,7 +3,6 @@ package fr.loicleinot.imdb;
 import android.app.ActionBar;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,11 +31,12 @@ public class FavActivity extends AppCompatActivity {
         IMDbContract mDbHelper = new IMDbContract(getApplicationContext());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        String[] projection = { IMDbContract.IMDbEntry.COLUMN_NAME_TITLE, IMDbContract.IMDbEntry.COLUMN_NAME_RELEASED, IMDbContract.IMDbEntry.COLUMN_NAME_PLOT, IMDbContract.IMDbEntry.COLUMN_NAME_POSTER, };
+        String[] projection = { IMDbContract.IMDbEntry.COLUMN_NAME_TITLE, IMDbContract.IMDbEntry.COLUMN_NAME_RELEASED, IMDbContract.IMDbEntry.COLUMN_NAME_PLOT, IMDbContract.IMDbEntry.COLUMN_NAME_POSTER, IMDbContract.IMDbEntry.COLUMN_NAME_ACTORS, IMDbContract.IMDbEntry.COLUMN_NAME_DIRECTORS, IMDbContract.IMDbEntry.COLUMN_NAME_GENRE, IMDbContract.IMDbEntry.COLUMN_NAME_RUNTIME, IMDbContract.IMDbEntry.COLUMN_NAME_TYPE};
 
         Cursor c = db.query(IMDbContract.IMDbEntry.TABLE_NAME, projection, null, null, null, null, null);
 
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getResources()));
 
         ArrayList<IMDbObject> object = new ArrayList<>();
 
@@ -45,9 +45,15 @@ public class FavActivity extends AppCompatActivity {
                 String name = c.getString(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_TITLE));
                 String year = c.getString(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_RELEASED));
                 String plot = c.getString(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_PLOT));
+                String genre = c.getString(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_GENRE));
+                String type = c.getString(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_TYPE));
+                String actor = c.getString(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_ACTORS));
+                String director = c.getString(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_DIRECTORS));
+                String runtime = c.getString(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_RUNTIME));
+
                 byte[] img = c.getBlob(c.getColumnIndexOrThrow(IMDbContract.IMDbEntry.COLUMN_NAME_POSTER));
 
-                object.add(new IMDbObject(name, year, plot, img));
+                object.add(new IMDbObject(name, year, plot, img, type, actor, director, runtime, genre));
                 Log.d("result", name);
             } while(c.moveToNext());
         }

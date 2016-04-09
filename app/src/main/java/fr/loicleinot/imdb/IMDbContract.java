@@ -16,14 +16,19 @@ public final class IMDbContract extends SQLiteOpenHelper{
             "CREATE TABLE " + IMDbEntry.TABLE_NAME + " (" +
                     IMDbEntry._ID + " INTEGER PRIMARY KEY," +
                     IMDbEntry.COLUMN_NAME_IMDB_ID + TEXT_TYPE + COMMA_SEP +
-                    IMDbEntry.COLUMN_NAME_POSTER + "BLOB" + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_POSTER + " BLOB" + COMMA_SEP +
                     IMDbEntry.COLUMN_NAME_PLOT + TEXT_TYPE + COMMA_SEP +
                     IMDbEntry.COLUMN_NAME_RELEASED + TEXT_TYPE + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_TYPE + TEXT_TYPE + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_GENRE + TEXT_TYPE + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_DIRECTORS + TEXT_TYPE + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_ACTORS + TEXT_TYPE + COMMA_SEP +
+                    IMDbEntry.COLUMN_NAME_RUNTIME + TEXT_TYPE + COMMA_SEP +
                     IMDbEntry.COLUMN_NAME_TITLE + TEXT_TYPE +" )";
 
     private static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + IMDbEntry.TABLE_NAME;
     public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "FeedReader.db";
+    public static final String DATABASE_NAME = "FeedReader2.db";
 
     public IMDbContract(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -53,5 +58,10 @@ public final class IMDbContract extends SQLiteOpenHelper{
         public static final String COLUMN_NAME_PLOT = "Plot";
         public static final String COLUMN_NAME_POSTER = "Poster";
         public static final String COLUMN_NAME_RELEASED = "Released";
+        public static final String COLUMN_NAME_TYPE = "Type";
+        public static final String COLUMN_NAME_GENRE = "Genre";
+        public static final String COLUMN_NAME_DIRECTORS = "Directors";
+        public static final String COLUMN_NAME_ACTORS = "Actors";
+        public static final String COLUMN_NAME_RUNTIME = "Runtime";
     }
 }

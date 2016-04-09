@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,14 +26,20 @@ public class IMDbRecyclerViewAdapter extends RecyclerView
             implements View
             .OnClickListener {
         TextView label;
-        TextView subtitle;
+        TextView year;
         ImageView image;
+        TextView type;
+        TextView actors;
+        TextView directors;
 
         public DataObjectHolder(View itemView) {
             super(itemView);
             label = (TextView) itemView.findViewById(R.id.title_list);
-            subtitle = (TextView) itemView.findViewById(R.id.subtitle);
+            year = (TextView) itemView.findViewById(R.id.year);
             image = (ImageView) itemView.findViewById(R.id.imageView3);
+            type = (TextView) itemView.findViewById(R.id.typeObject);
+            directors = (TextView) itemView.findViewById(R.id.directors);
+            actors = (TextView) itemView.findViewById(R.id.actors);
             itemView.setOnClickListener(this);
         }
 
@@ -66,8 +71,11 @@ public class IMDbRecyclerViewAdapter extends RecyclerView
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
         holder.label.setText(mDataset.get(position).getTitle());
-        holder.subtitle.setText(mDataset.get(position).getReleased());
+        holder.year.setText("(" + mDataset.get(position).getReleased()+")");
         holder.image.setImageBitmap(DbBitmapUtility.getImage(mDataset.get(position).getImage()));
+        holder.type.setText(mDataset.get(position).getType() + " ");
+        holder.actors.setText(" " + mDataset.get(position).getActors() + " ");
+        holder.directors.setText(" " + mDataset.get(position).getDirectors() + " ");
     }
 /*
         public void addItem(IMDbObject dataObj, int index) {
