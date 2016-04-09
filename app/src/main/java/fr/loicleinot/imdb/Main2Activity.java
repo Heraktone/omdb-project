@@ -13,6 +13,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -26,6 +28,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.ViewFlipper;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,12 +38,14 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private MenuItem searchItem;
     private SearchView searchView;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,8 @@ public class Main2Activity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
         setSupportActionBar(toolbar);                   // Setting toolbar as the ActionBar with setSupportActionBar() call
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         // Associate searchable configuration with the SearchView
         searchView = new SearchView(getSupportActionBar().getThemedContext());
@@ -74,33 +81,6 @@ public class Main2Activity extends AppCompatActivity {
 
         ViewFlipper vf = (ViewFlipper)findViewById(R.id.ViewFlipper01);
         vf.setDisplayedChild(3);
-
-        ToggleButton button = (ToggleButton) findViewById(R.id.toggleButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                IMDbContract mDbHelper = new IMDbContract(getApplicationContext());
-
-                String title = ((TextView)findViewById(R.id.title)).getText().toString();
-                String released = ((TextView)findViewById(R.id.year)).getText().toString();
-                ImageView imageView = (ImageView)findViewById(R.id.imageView);
-                imageView.buildDrawingCache();
-                byte[] poster = DbBitmapUtility.getBytes(imageView.getDrawingCache());
-                String plot = ((TextView)findViewById(R.id.textView3)).getText().toString();
-
-                SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-                // Create a new map of values, where column names are the keys
-                ContentValues values = new ContentValues();
-                values.put(IMDbContract.IMDbEntry.COLUMN_NAME_TITLE, title);
-                values.put(IMDbContract.IMDbEntry.COLUMN_NAME_RELEASED, released);
-                values.put(IMDbContract.IMDbEntry.COLUMN_NAME_POSTER, poster);
-                values.put(IMDbContract.IMDbEntry.COLUMN_NAME_PLOT, plot);
-
-                // Insert the new row, returning the primary key value of the new row
-                db.insert(IMDbContract.IMDbEntry.TABLE_NAME,"null", values);
-            }
-        });
 
         Button buttonFav = (Button) findViewById(R.id.button);
 
@@ -156,6 +136,7 @@ public class Main2Activity extends AppCompatActivity {
     public class RequestOMDB extends AsyncTask<String, Void, Void> {
         IMDbPage imdbinfo;
         private boolean response = false;
+        private ArrayList<IMDbObject> object;
 
         @Override
         protected Void doInBackground(String... params) {
@@ -177,7 +158,8 @@ public class Main2Activity extends AppCompatActivity {
             JSONObject json1;
 
             try {
-                url = new URL("http://www.omdbapi.com/?t=" + title.replaceAll(" ", "+") + "=&plot=full&r=json");
+                //url = new URL("http://www.omdbapi.com/?t=" + title.replaceAll(" ", "+") + "=&plot=full&r=json");
+                url = new URL("http://www.omdbapi.com/?s=" + title.replaceAll(" ", "+"));
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(100000);
                 conn.setConnectTimeout(150000);
@@ -191,11 +173,22 @@ public class Main2Activity extends AppCompatActivity {
                 Log.d("content", "xml " + contentAsString);
 
                 json1 = new JSONObject(contentAsString);
-                response = (json1.getString("Response").equals("True"));
-                Log.d("reponse", "json " + json1.getString("Response") + " / response " + response);
-
+//                response = (json1.getString("Response").equals("True"));
+//                Log.d("reponse", "json " + json1.getString("Response") + " / response " + response);
+/*
                 if(response)
-                    imdbinfo = new IMDbPage(json1.getString("Title"), json1.getString("Plot"), getBitmapFromURL(json1.getString("Poster")), json1.getString("Released"), json1.getString("Runtime"), json1.getString("Actors"), json1.getString("Director"), json1.getString("Genre"));
+                    imdbinfo = new IMDbPage(json1.getString("Title"), json1.getString("Plot"), getBitmapFromURL(json1.getString("Poster")), json1.getString("Released"), json1.getString("Runtime"), json1.getString("Actors"), json1.getString("Director"), json1.getString("Genre"));*/
+
+                object = new ArrayList<>();
+
+                JSONArray jsonResult = json1.getJSONArray("Search");
+                for (int i = 0; i < jsonResult.length(); i++) {
+                    response = true;
+                    JSONObject row = jsonResult.getJSONObject(i);
+                    Bitmap img = getBitmapFromURL(row.getString("Poster"));
+                    object.add(new IMDbObject(row.getString("Title"), row.getString("Year"), "", DbBitmapUtility.getBytes(img)));
+                }
+
 
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
@@ -239,6 +232,12 @@ public class Main2Activity extends AppCompatActivity {
             if(response) {
                 vf.setDisplayedChild(2);
 
+                IMDbRecyclerViewAdapter mAddapter = new IMDbRecyclerViewAdapter(object);
+                LinearLayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setAdapter(mAddapter);
+
+/*
                 ImageView imageView = (ImageView) findViewById(R.id.imageView);
                 imageView.setImageBitmap(imdbinfo.getPoster());
 
@@ -262,14 +261,13 @@ public class Main2Activity extends AppCompatActivity {
 
                 TextView genre = (TextView) findViewById(R.id.genre);
                 genre.setText(imdbinfo.getGenre());
-
+*/
                 Log.d("event", "post execution");
             }
             else {
                 vf.setDisplayedChild(1);
 
                 TextView plot = (TextView) findViewById(R.id.textView3);
-                plot.setText("N/A");
             }
         }
 
