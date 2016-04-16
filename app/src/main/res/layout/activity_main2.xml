@@ -16,12 +16,13 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/imdb"/>
+            android:src="@drawable/imdb"
+            android:contentDescription="@string/poster" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="IMDb"
+            android:text="@string/imdb"
             android:layout_gravity="center"
             android:id="@+id/toolbar_title"
             android:textSize="20sp"

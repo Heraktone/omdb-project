@@ -12,16 +12,14 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.ViewFlipper;
 
 import org.json.JSONArray;
@@ -38,8 +36,6 @@ import java.util.ArrayList;
 
 public class Main2Activity extends AppCompatActivity {
 
-    private Toolbar toolbar;
-    private MenuItem searchItem;
     private SearchView searchView;
     private RecyclerView mRecyclerView;
 
@@ -48,7 +44,7 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar); // Attaching the layout to the toolbar object
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);                   // Setting toolbar as the ActionBar with setSupportActionBar() call
 
@@ -59,7 +55,8 @@ public class Main2Activity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         // Associate searchable configuration with the SearchView
-        searchView = new SearchView(getSupportActionBar().getThemedContext());
+        if(getSupportActionBar() != null)
+            searchView = new SearchView( getSupportActionBar().getThemedContext());
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchableInfo searchableInfo = searchManager.getSearchableInfo(getComponentName());
@@ -101,7 +98,7 @@ public class Main2Activity extends AppCompatActivity {
         // Inflate menu to add items to action bar if it is present.
         inflater.inflate(R.menu.menu_main, menu);
 
-        searchItem = menu.add(android.R.string.search_go);
+        MenuItem searchItem = menu.add(android.R.string.search_go);
 
         searchItem.setIcon(R.drawable.ic_search_white_36dp);
 
@@ -150,7 +147,6 @@ public class Main2Activity extends AppCompatActivity {
         }
 
         private void urlRequest(String title) throws IOException {
-            InputStream is = null;
             JSONObject json1, jsonObjectFiche;
 
             try {
@@ -176,10 +172,6 @@ public class Main2Activity extends AppCompatActivity {
 
             } catch (JSONException | IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (is != null) {
-                    is.close();
-                }
             }
         }
 
@@ -244,8 +236,6 @@ public class Main2Activity extends AppCompatActivity {
             }
             else {
                 vf.setDisplayedChild(1);
-
-                TextView plot = (TextView) findViewById(R.id.textView3);
             }
         }
 

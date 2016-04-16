@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
-
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/imageView2"
-        android:src="@drawable/error" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/error_film"
-        android:id="@+id/textView"
-        android:layout_gravity="center"
-        android:textSize="30dp"
-        android:textColor="#FFCA170D"
-        android:gravity="center" />
-</LinearLayout>
+    android:text="@string/error_film"
+    android:id="@+id/textView"
+    android:layout_gravity="center"
+    android:textSize="30sp"
+    android:textColor="#FFCA170D"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:drawableTop="@drawable/error" />

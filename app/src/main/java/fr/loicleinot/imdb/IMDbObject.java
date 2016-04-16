@@ -1,9 +1,7 @@
 package fr.loicleinot.imdb;
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.BaseColumns;
 
 /**
  * Created by Heraktone-PORTABLE on 08/04/2016.

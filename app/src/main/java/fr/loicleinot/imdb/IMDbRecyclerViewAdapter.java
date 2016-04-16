@@ -2,6 +2,7 @@ package fr.loicleinot.imdb;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +14,11 @@ import java.util.ArrayList;
 
 /**
  * Created by Heraktone-PORTABLE on 09/04/2016.
+ *
  */
 public class IMDbRecyclerViewAdapter extends RecyclerView
         .Adapter<IMDbRecyclerViewAdapter
         .DataObjectHolder> {
-    private String LOG_TAG = "IMDbRecyclerViewAdapter";
     private ArrayList<IMDbObject> mDataset;
 
     private Context context;
@@ -70,12 +71,14 @@ public class IMDbRecyclerViewAdapter extends RecyclerView
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).getTitle());
-        holder.year.setText("(" + mDataset.get(position).getReleased()+")");
+        IMDbObject obj = mDataset.get(position);
+        Resources res = context.getResources();
+        holder.label.setText(obj.getTitle());
+        holder.year.setText(String.format(res.getString(R.string.string_date), obj.getReleased()));
         holder.image.setImageBitmap(DbBitmapUtility.getImage(mDataset.get(position).getImage()));
-        holder.type.setText(mDataset.get(position).getType() + " ");
-        holder.actors.setText(" " + mDataset.get(position).getActors() + " ");
-        holder.directors.setText(" " + mDataset.get(position).getDirectors() + " ");
+        holder.type.setText(String.format(res.getString(R.string.string_other),obj.getType()));
+        holder.actors.setText(String.format(res.getString(R.string.string_other), obj.getActors()));
+        holder.directors.setText(String.format(res.getString(R.string.string_other),obj.getDirectors()));
     }
 /*
         public void addItem(IMDbObject dataObj, int index) {

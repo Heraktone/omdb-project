@@ -9,7 +9,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_favorite">Favorites</string>
     <string name="title_activity_main2">Main2Activity</string>
-    <string name="menu_search">...</string>
+    <string name="menu_search">…</string>
     <string name="year"><b>Released :</b></string>
     <string name="actors"><b>Actors :</b></string>
     <string name="director"><b>Directors :</b></string>
@@ -17,4 +17,16 @@
     <string name="genre"><b>Genre :</b></string>
     <string name="error_film">We don\'t have this film in our database.</string>
     <string name="accueil">IMDb Application. \n Search information about a movie in the research bar or access to your favorite movies down below ! </string>
+    <string name="plot">Plot</string>
+    <string name="title">Title</string>
+    <string name="imdb">IMDb</string>
+    <string name="poster">Poster</string>
+    <string name="avec">Avec :</string>
+    <string name="directors">Directors</string>
+    <string name="film">Film</string>
+    <string name="_2016">(2016)</string>
+    <string name="my_favorites">My Favorites</string>
+    <string name="image_error">image error</string>
+    <string name="string_date">(%1$s)</string>
+    <string name="string_other"> %1$s </string>
 </resources>
