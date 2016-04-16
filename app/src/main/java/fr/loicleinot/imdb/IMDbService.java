@@ -32,10 +32,10 @@ public class IMDbService extends IntentService {
             public void run() {
                 handler.post(new Runnable() {
                     public void run() {
-                        Toast.makeText(IMDbService.this, "Hello....", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(IMDbService.this, "Don't forget to search for a new movie today dear friend, xoxo", Toast.LENGTH_SHORT).show();
                     } });
             }};
-        timer.schedule(task, 0, 5000);
+        timer.schedule(task, 0, 24*60*1000);
         return START_STICKY;
     }
 
